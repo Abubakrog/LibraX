@@ -1,144 +1,130 @@
-# 📚 LibraX — Modern University Library Management System
+# 📚 LibraX — Enterprise University Library Management System
 
-**LibraX** is a modern, responsive, high-performance frontend UI/UX engineered for college and university library management. Built with **React 19**, **Vite**, **Tailwind CSS v4**, **Lucide Icons**, and **Chart.js**, it delivers an intuitive, university-grade SaaS dashboard aesthetic for academic project demonstrations and presentations.
+**LibraX** is a minimalist, modern frontend UI/UX engineered for college and university library management. Crafted with **React 19**, **Vite**, **Tailwind CSS v4**, **Lucide Icons**, and **Chart.js**, it adheres to **Linear / Stripe / Vercel-level SaaS design principles** — clean hierarchy, intelligent whitespace, subtle 1px borders, quiet transitions, and unified typography.
 
 ---
 
-## 🌟 Highlights & Key Features
+## 💎 Design Direction & Standards
+
+- **Aesthetic:** Minimalist enterprise SaaS — subtle neutral surfaces, crisp 1px borders (`border-slate-200/80`), quiet hover states, and unified typography.
+- **Color System:** Neutral slate (`#0F172A`, `#334155`, `#64748B`, `#F8FAFC`) with subtle, purposeful accents. No loud or childish gradients.
+- **Typography:** **Inter** font with tight letter tracking (`tracking-tight`) and tabular numbers (`tabular-nums`) for currency, roll numbers, and dates.
+- **Currency Standard:** Fully standardized to **Indian Rupees (₹ / INR)** across all dashboards, fines, overdue fees, circulation rules, and reports.
+- **Component Geometry:** Refined `rounded-lg` and `rounded-xl` card geometry with subtle border delineation instead of exaggerated border radii or heavy drop-shadows.
+
+---
+
+## 🌟 Modules & Features
 
 ### 1. 📊 Executive Dashboard
-- **Welcome Greeting**: *"Good Morning, Admin 👋 — Here’s what’s happening in your library today."*
-- **4 Key Stat Cards**:
-  - **Total Books**: 12,480 (+4.2% this month)
-  - **Available Books**: 9,860 (79% in library)
-  - **Issued Books**: 2,340 (18.7% active loans)
-  - **Registered Students**: 1,850 (+120 new enrollments)
-- **Library Activity Chart**: Interactive weekly line curve tracking daily checkouts vs returns using **Chart.js**.
-- **Overdue Books Panel**: Real-time alerts with student contact info, days overdue, and a **"Remind"** trigger.
-- **Recently Issued Books Table**: Live tracking with student department, due date, and status badges.
-- **Popular Books Widget**: High-demand textbook ranking with realistic book covers and borrow counts.
+- **Page Header:** Minimalist title and date context with direct quick action links.
+- **4 Key Stat Cards:** Total Books (12,480), Available Books (9,860), Issued Books (2,340), Registered Students (1,850).
+- **Circulation Activity Chart:** Monochromatic, clean weekly line graph comparing daily checkouts vs returns using **Chart.js**.
+- **Overdue Notices:** Clean list item with borrower name, overdue days, and direct **"Remind"** trigger.
+- **Recently Issued Books Table:** Tabular circulation records with department, due date, and status badges.
+- **Popular Titles:** Curated list of high-demand textbooks with realistic cover bindings and checkout counters.
 
 ---
 
 ### 2. 📖 Book Catalogue
-- **Rich Grid & Table Views**: Seamless view mode toggle for card inspection or dense tabular scanning.
-- **Realistic Book Covers**: Custom styling with embossed foil titles, category tags, author names, and spine aesthetics.
-- **Advanced Filtering & Sorting**: Filter by Category (Computer Science, Software Engineering, AI, Programming, etc.), Availability (In Stock, Low Stock ≤3, Issued Out), and Sort by Popularity, Title, Author, or Year.
-- **+ Add New Book Modal**: Complete registration form with title, author, ISBN, publisher, edition, shelf location, and copy counts.
-- **Book Details Modal**: High-res cover preview, synopsis, shelf location, total vs available copies, list of current borrowers, and direct **"Issue Book"** action.
+- **Grid & Table View Toggle:** Switch between publisher card grids and dense tabular scanning.
+- **Realistic Book Covers:** Minimalist book spine texture, category tag, title hierarchy, author, and edition tag.
+- **Filtering & Sorting:** Filter by department category (CS, SE, AI, Programming, etc.), availability status (In Stock, Low Stock ≤3, Issued Out), and sort by popularity, title, author, or year.
+- **+ Add New Book Modal:** Clean dialog with title, author, ISBN, publisher, edition, shelf location, and copy counts.
+- **Book Details Modal:** Book overview, synopsis, shelf location, total vs available copies, list of current borrowers, and direct **"Issue Book"** action.
 
 ---
 
 ### 3. 🎓 Students & Members Directory
-- **Registered Scholar Table**: Student ID / Roll number (e.g. `24CS014`), name, avatar, department, current book count (with visual quota meter), due status, and status badge (`Active`, `Restricted`, `Suspended`).
-- **Department & Status Filters**: Filter by CS, IT, AI & Data Science, Electronics, and membership state.
-- **+ Add Student Modal**: Enroll new students with roll number, department, semester, email, and phone.
-- **Student Profile Modal**:
-  - Member info card with avatar, contact details, and active loan quota.
-  - **Current Issued Books** tab with countdown of days left or overdue warnings.
-  - **Borrowing History** tab with past returned books.
+- **Member Directory Table:** Roll number (e.g. `24CS014`), name, avatar, department, current loan count (with minimal progress meter), due status, and status badge (`Active`, `Restricted`, `Suspended`).
+- **Department & Status Filters:** Filter by CS, IT, AI & Data Science, Electronics, etc.
+- **+ Add Student Modal:** Registration modal with roll number, semester, department, email, and phone.
+- **Student Profile Modal:** Member card with avatar, contact info, active loan quota, **Current Issued Books** tab with countdowns, and **Borrowing History** tab.
 
 ---
 
-### 4. 🔄 Issue & Return (Circulation Desk)
-- **Tab 1: Issue Book (Checkout)**:
+### 4. 🔄 Circulation Desk (Issue & Return)
+- **Tab 1: Issue Book (Checkout):**
   - Searchable student picker with live quota validation (max 4 books).
-  - Searchable book picker with stock validation (prevents checkout of 0-stock items).
+  - Searchable book picker with stock validation.
   - Duration presets: **14 Days**, **28 Days**, **Semester (90 Days)**, with automated due date calculation.
-  - Summary review card with desk notes.
-  - **Confirm & Issue Book** button updating state, transaction ledger, and inventory in real-time with instant toast notifications.
-- **Tab 2: Return Book (Check-in)**:
+  - Transaction summary review card showing book preview, student info, due date, and late penalty rate (**₹10/day**).
+- **Tab 2: Return Book (Check-in):**
   - Active loan selector.
-  - Auto-calculated overdue days and fine (\$5/day).
-  - Physical condition assessment (**Good**, **Fair**, **Damaged** with added repair surcharge).
+  - Auto-calculated overdue days and fine (**₹10/day**).
+  - Physical condition assessment (**Good**, **Fair**, **Damaged (+₹150)**).
   - One-click **"Confirm Return & Shelve Book"** with instant stock increment and quota restoration.
 
 ---
 
 ### 5. 💰 Fines & Dues Management
-- **Statistics Overview**:
-  - Total Outstanding: **\$1,240**
-  - Collected This Month: **\$3,850**
+- **Statistics Overview (in ₹ INR):**
+  - Total Outstanding: **₹1,240**
+  - Collected This Month: **₹3,850**
   - Overdue Members: **42**
-  - Average Fine: **\$12.50**
-- **Dues Ledger Table**: Ref ID, Student, Book, Due Date, Return Date, Days Overdue, Fine Amount, Badges (**Paid, Pending, Overdue**).
-- **Collect Payment Modal**: Supports UPI, Cash, Card, and instant digital receipt generation.
-- **Waive Fine Modal**: Authorized librarian waiver with Dean medical/travel exemption reasons.
+  - Average Fine: **₹25** (Standard rate: ₹10/day)
+- **Dues Ledger Table:** Ref ID, Student, Book, Due Date, Return Date, Days Overdue, Fine Amount in ₹, Badges (**Paid, Pending, Overdue**).
+- **Collect Payment Modal:** Supports UPI, Cash, Card, with instant payment confirmation and receipt generation.
+- **Waive Fine Modal:** Official waiver dialog with Dean medical/travel exemption options.
 
 ---
 
-### 6. 📈 Reports & Analytics
-- **Date Filters**: **Last 7 Days**, **Last 30 Days**, **This Semester**, **Custom Range**.
-- **Interactive Visualizations**:
-  - **Circulation Trajectory**: Monthly books borrowed vs returned trends.
-  - **Popular Categories**: Doughnut chart showing distribution across CS, AI, SE, Programming, etc.
-  - **Fine Collection Inflow**: Bar chart of monthly recovery.
-- **Most Active Scholars Leaderboard**: Ranked top readers with honor badges (*Gold Scholar*, *Silver Reader*, etc.).
-- **Export Actions**: One-click **PDF** and **CSV** export simulations with toast confirmations.
+### 6. 📈 Reports & Circulation Analytics
+- **Date Filters:** **Last 7 Days**, **Last 30 Days**, **This Semester**, **Custom Range**.
+- **Visualizations:**
+  - **Circulation Trajectory:** Monthly books borrowed vs returned trends.
+  - **Category Distribution:** Doughnut chart breaking down repository titles.
+  - **Fine Recovery Inflow:** Bar chart of monthly recovery in **INR (₹)**.
+- **Active Scholars Leaderboard:** Top readers ranked with honors badges (*Gold Scholar*, *Silver Reader*).
+- **Export Actions:** One-click **PDF** and **CSV** export triggers.
 
 ---
 
 ### 7. 🔔 Notification Center
-- Categorized alerts with indicators for **Urgent**, **Warning**, **Success**, and **Info**.
+- Feed with category badges for **Urgent**, **Warning**, **Success**, and **Info**.
 - Realistic library alerts:
   - *“Database System Concepts is due tomorrow.”*
-  - *“3 books are severely overdue.”*
+  - *“3 books are overdue.”*
   - *“New student registration completed.”*
   - *“Book successfully returned.”*
-- Action buttons (**"View Loan"**, **"Open Fines"**, **"View Member"**).
-- **"Mark All Read"** trigger.
+- Action buttons (**"View Loan"**, **"Open Fines"**, **"View Member"**) and **"Mark All Read"** trigger.
 
 ---
 
 ### 8. ⚙️ Settings & Configuration
-- **Admin Profile**: Edit name, designation, department, and email.
-- **Library Information**: Institution name (*Apex Institute of Technology*), opening hours, loan duration limits, max books allowed, daily fine rate.
-- **Notifications**: Email due alerts, SMS overdue notices, low-stock warnings.
-- **Appearance**: **Light / Dark Mode** toggle with persistent CSS styling.
-- **Security**: Two-Factor Authentication (2FA) status, session timeouts, and password change.
+- **Admin Profile:** Name, designation, department, and email.
+- **Library Policy:** Institution name, opening hours, loan duration limits, max books allowed, daily fine rate (**₹10/day**).
+- **Alert Rules:** Email due alerts, SMS overdue notices, low-stock warnings.
+- **Appearance:** **Light / Dark Mode** toggle with persistent CSS styling.
+- **Security:** 2FA status, session timeouts, and password management.
 
 ---
 
 ### 9. 🔐 Login Screen
-- **Split-Screen Layout**:
-  - **Left**: Deep navy/indigo university branding, inspiring quote, uptime metric, and statistics.
-  - **Right**: Modern authentication form with email, password show/hide, remember me, and sign-in button.
-  - **One-Click Quick Demo Login**: Specially built for **college viva / project presentations** to instantly log in as Chief Librarian with preloaded mock credentials!
-- Clean sign-out flow from the sidebar and top navbar.
+- **Minimalist Split-Screen Layout:**
+  - **Left**: Deep slate obsidian background, subtle grid texture, clean typography, uptime metric, and statistics.
+  - **Right**: Clean authentication card with email, password show/hide, remember me, and sign-in button.
+  - **1-Click Demo Login**: Pre-fills Chief Librarian credentials for instant college viva / project presentation.
 
 ---
 
-### 10. ⚡ UX Micro-Interactions & Accessibility
-- **Global Search Palette (`Ctrl+K` / `⌘K`)**: Spotlight command palette searching across books, students, and page routes.
-- **Toast Notifications**: Interactive animated alert toasts for every user action.
-- **Responsive Navigation**: Persistent collapsible sidebar for desktop + slide-over drawer and mobile thumb navigation bar for phones/tablets.
-- **Design System**: Navy/Indigo primary palette (`#0F172A`, `#1E293B`, `#4F46E5`, `#6366F1`), subtle borders, soft shadows, rounded corners, and **Plus Jakarta Sans / Inter** typography.
+### 10. ⚡ Spotlight Command Palette (`Ctrl+K` / `⌘K`)
+- Quick-search modal searching across books, authors, students, roll numbers, and navigation shortcuts with keyboard navigation support.
 
 ---
 
-## 🚀 How to Run Locally
+## 🚀 Running the Project
 
-### Prerequisites
-- Node.js (v18 or higher)
-- npm (v9 or higher)
-
-### 1. Install dependencies
 ```bash
+# 1. Install dependencies
 npm install
-```
 
-### 2. Start the development server
-```bash
+# 2. Run development server
 npm run dev
-```
-Open your browser at `http://localhost:5173/` to view the live dashboard.
 
-### 3. Build for Production
-```bash
+# 3. Build for production
 npm run build
-```
 
-### 4. Preview the Production Build
-```bash
+# 4. Preview production build
 npm run preview
 ```
