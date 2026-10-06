@@ -24,8 +24,7 @@ export default function Sidebar() {
     setIsSidebarCollapsed,
     notifications,
     fines,
-    setIsAuthenticated,
-    addToast
+    logoutUser
   } = useLibrary();
 
   const unreadNotificationsCount = notifications.filter((n) => !n.read).length;
@@ -43,9 +42,7 @@ export default function Sidebar() {
   ];
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    setActivePage("login");
-    addToast("info", "Signed Out", "You have securely signed out of the LibraX workstation.");
+    logoutUser();
   };
 
   return (

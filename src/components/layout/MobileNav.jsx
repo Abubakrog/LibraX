@@ -22,8 +22,7 @@ export default function MobileNav() {
     setIsMobileMenuOpen,
     notifications,
     fines,
-    setIsAuthenticated,
-    addToast
+    logoutUser
   } = useLibrary();
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -112,10 +111,8 @@ export default function MobileNav() {
             <div className="p-3 border-t border-slate-100 dark:border-slate-800">
               <button
                 onClick={() => {
-                  setIsAuthenticated(false);
-                  setActivePage("login");
                   setIsMobileMenuOpen(false);
-                  addToast("info", "Signed Out", "Logged out securely.");
+                  logoutUser();
                 }}
                 className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors"
               >

@@ -21,8 +21,7 @@ export default function Navbar() {
     notifications,
     markNotificationRead,
     markAllNotificationsRead,
-    setIsAuthenticated,
-    addToast
+    logoutUser
   } = useLibrary();
 
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -231,10 +230,8 @@ export default function Navbar() {
                 </button>
                 <button
                   onClick={() => {
-                    setIsAuthenticated(false);
-                    setActivePage("login");
                     setIsProfileOpen(false);
-                    addToast("info", "Signed Out", "Successfully signed out.");
+                    logoutUser();
                   }}
                   className="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-md transition-colors"
                 >

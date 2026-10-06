@@ -13,7 +13,13 @@ const LibraryContext = createContext();
 export function LibraryProvider({ children }) {
   // Navigation & Authentication
   const [activePage, setActivePage] = useState("dashboard");
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    try {
+      return localStorage.getItem("librax_auth") === "true";
+    } catch {
+      return false;
+    }
+  });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -365,6 +371,35 @@ export function LibraryProvider({ children }) {
     addToast("info", "Notifications", "All notifications marked as read.");
   };
 
+  // Central Auth Handlers
+  const loginUser = (userProfile = null, remember = true) => {
+    if (userProfile) {
+      setAdminProfile((prev) => ({
+        ...prev,
+        name: userProfile.name || prev.name,
+        email: userProfile.email || prev.email,
+        title: userProfile.role || prev.title,
+        department: userProfile.department || prev.department
+      }));
+    }
+    setIsAuthenticated(true);
+    setActivePage("dashboard");
+    if (remember) {
+      try {
+        localStorage.setItem("librax_auth", "true");
+      } catch {}
+    }
+  };
+
+  const logoutUser = () => {
+    setIsAuthenticated(false);
+    setActivePage("login");
+    try {
+      localStorage.removeItem("librax_auth");
+    } catch {}
+    addToast("info", "Signed Out", "You have securely signed out of the LibraX workstation.");
+  };
+
   return (
     <LibraryContext.Provider
       value={{
@@ -406,7 +441,9 @@ export function LibraryProvider({ children }) {
         payFine,
         waiveFine,
         markNotificationRead,
-        markAllNotificationsRead
+        markAllNotificationsRead,
+        loginUser,
+        logoutUser
       }}
     >
       <div className={darkMode ? "dark" : ""}>{children}</div>
