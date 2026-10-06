@@ -24,16 +24,23 @@ export function LibraryProvider({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
-  // Admin Profile
-  const [adminProfile, setAdminProfile] = useState({
-    name: "Dr. Alok Verma",
-    title: "Chief Librarian",
-    department: "Central University Library",
-    email: "alok.verma@university.edu",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-    institution: "Apex Institute of Technology",
-    semester: "Fall 2026",
-    role: "Super Admin"
+  // Admin / User Profile
+  const [adminProfile, setAdminProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem("librax_user");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      name: "Dr. Alok Verma",
+      title: "Chief Librarian",
+      department: "Central University Library",
+      email: "alok.verma@university.edu",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      institution: "Apex Institute of Technology",
+      semester: "Fall 2026",
+      role: "Super Admin",
+      roleType: "librarian"
+    };
   });
 
   // Core Data
@@ -374,13 +381,26 @@ export function LibraryProvider({ children }) {
   // Central Auth Handlers
   const loginUser = (userProfile = null, remember = true) => {
     if (userProfile) {
-      setAdminProfile((prev) => ({
-        ...prev,
-        name: userProfile.name || prev.name,
-        email: userProfile.email || prev.email,
-        title: userProfile.role || prev.title,
-        department: userProfile.department || prev.department
-      }));
+      setAdminProfile((prev) => {
+        const isStudent = userProfile.roleType === "student" || userProfile.role === "Student Member";
+        const updated = {
+          ...prev,
+          name: userProfile.name || prev.name,
+          email: userProfile.email || prev.email,
+          title: userProfile.role || userProfile.title || (isStudent ? "Student Member" : "Chief Librarian"),
+          department: userProfile.department || prev.department,
+          roleType: isStudent ? "student" : "librarian",
+          rollNumber: userProfile.rollNumber || prev.rollNumber || null,
+          staffId: userProfile.staffId || prev.staffId || null,
+          avatar: userProfile.avatar || (isStudent
+            ? "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80"
+            : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80")
+        };
+        try {
+          localStorage.setItem("librax_user", JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
     }
     setIsAuthenticated(true);
     setActivePage("dashboard");
@@ -396,6 +416,7 @@ export function LibraryProvider({ children }) {
     setActivePage("login");
     try {
       localStorage.removeItem("librax_auth");
+      localStorage.removeItem("librax_user");
     } catch {}
     addToast("info", "Signed Out", "You have securely signed out of the LibraX workstation.");
   };

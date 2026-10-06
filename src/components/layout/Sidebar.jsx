@@ -13,7 +13,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Library,
-  Building2
+  Building2,
+  GraduationCap
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -24,7 +25,8 @@ export default function Sidebar() {
     setIsSidebarCollapsed,
     notifications,
     fines,
-    logoutUser
+    logoutUser,
+    adminProfile
   } = useLibrary();
 
   const unreadNotificationsCount = notifications.filter((n) => !n.read).length;
@@ -86,16 +88,30 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* Campus Context Pill */}
+      {/* Campus & Active User Context Pill */}
       {!isSidebarCollapsed && (
         <div className="px-3 pt-3">
           <div className="px-2.5 py-2 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 text-xs flex items-center gap-2">
-            <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <div className="min-w-0">
-              <p className="font-medium text-slate-800 dark:text-slate-200 truncate leading-tight text-[11px]">
-                Apex Institute of Tech
+            <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${
+              adminProfile?.roleType === "student"
+                ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-400"
+                : "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300"
+            }`}>
+              {adminProfile?.roleType === "student" ? (
+                <GraduationCap className="w-3.5 h-3.5" />
+              ) : (
+                <Building2 className="w-3.5 h-3.5" />
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-slate-800 dark:text-slate-200 truncate leading-tight text-[11px]">
+                {adminProfile?.name || "Apex Institute of Tech"}
               </p>
-              <p className="text-[10px] text-slate-400 truncate">Central Campus Library</p>
+              <p className="text-[10px] text-slate-400 truncate">
+                {adminProfile?.roleType === "student"
+                  ? `Student • ${adminProfile?.rollNumber || "Member"}`
+                  : "Central Campus Library"}
+              </p>
             </div>
           </div>
         </div>

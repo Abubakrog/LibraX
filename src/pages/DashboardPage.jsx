@@ -14,7 +14,8 @@ import {
   Repeat,
   Plus,
   Calendar,
-  ChevronRight
+  ChevronRight,
+  GraduationCap
 } from "lucide-react";
 import {
   Chart as ChartJS,
@@ -50,7 +51,8 @@ export default function DashboardPage() {
     books,
     setActivePage,
     setSelectedBookForDetails,
-    addToast
+    addToast,
+    adminProfile
   } = useLibrary();
 
   // Linear-style minimalist chart theme
@@ -134,7 +136,7 @@ export default function DashboardPage() {
             Library Dashboard
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Good morning, Admin. Here’s today’s circulation summary and active inventory status.
+            Good morning, {adminProfile?.roleType === "student" ? `${adminProfile.name} (Student)` : "Admin"}. Here’s today’s circulation summary and active inventory status.
           </p>
         </div>
 
@@ -155,6 +157,32 @@ export default function DashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* Student Portal Mode Context Banner */}
+      {adminProfile?.roleType === "student" && (
+        <div className="p-3.5 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
+              <GraduationCap className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="font-semibold text-indigo-950 dark:text-indigo-200">
+                Student Member Portal: {adminProfile.name} • Roll: {adminProfile.rollNumber || "24CS014"}
+              </p>
+              <p className="text-[11px] text-indigo-700/80 dark:text-indigo-300">
+                Current checkouts: 2 books issued (1 due soon). Available borrowing quota: 2 more books.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setActivePage("books")}
+            className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-medium transition-colors cursor-pointer"
+          >
+            <span>Explore Catalogue</span>
+            <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+      )}
 
       {/* 4 Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
