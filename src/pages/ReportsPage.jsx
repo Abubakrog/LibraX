@@ -1,349 +1,259 @@
 import React, { useState } from "react";
 import { useLibrary } from "../context/LibraryContext";
+import Badge from "../components/common/Badge";
 import {
+  Printer,
   Download,
+  BookOpen,
+  CheckCircle,
+  Clock,
+  IndianRupee,
   Award,
-  FileSpreadsheet
+  FileText
 } from "lucide-react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-} from "chart.js";
-import { Line, Bar, Doughnut } from "react-chartjs-2";
 import {
   MONTHLY_TREND_DATA,
   CATEGORY_BREAKDOWN_DATA,
   ACTIVE_STUDENTS_LEADERBOARD
 } from "../data/mockData";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
-
 export default function ReportsPage() {
-  const { addToast } = useLibrary();
+  const { stats, addToast } = useLibrary();
+  const [selectedSemester, setSelectedSemester] = useState("Fall 2026");
 
-  const [dateFilter, setDateFilter] = useState("This Semester");
+  const monthlyFines = [1420, 1890, 2650, 3100, 4200, 3850];
 
-  // Monthly Circulation Line Chart (Sleek Linear styling)
-  const circulationData = {
-    labels: MONTHLY_TREND_DATA.labels,
-    datasets: [
-      {
-        label: "Borrowed",
-        data: MONTHLY_TREND_DATA.borrowed,
-        borderColor: "#0f172a",
-        backgroundColor: "rgba(15, 23, 42, 0.03)",
-        tension: 0.25,
-        fill: true,
-        pointBackgroundColor: "#0f172a",
-        pointBorderColor: "#ffffff",
-        pointHoverRadius: 4,
-        pointRadius: 2.5,
-        borderWidth: 1.75
-      },
-      {
-        label: "Returned",
-        data: MONTHLY_TREND_DATA.returned,
-        borderColor: "#64748b",
-        backgroundColor: "rgba(100, 116, 139, 0.02)",
-        tension: 0.25,
-        fill: true,
-        pointBackgroundColor: "#64748b",
-        pointBorderColor: "#ffffff",
-        pointHoverRadius: 4,
-        pointRadius: 2.5,
-        borderWidth: 1.75
-      }
-    ]
+  const handlePrint = () => {
+    window.print();
   };
 
-  // Popular Categories Doughnut Chart
-  const categoryData = {
-    labels: CATEGORY_BREAKDOWN_DATA.labels,
-    datasets: [
-      {
-        data: CATEGORY_BREAKDOWN_DATA.counts,
-        backgroundColor: [
-          "#0f172a", // Slate-900
-          "#334155", // Slate-700
-          "#475569", // Slate-600
-          "#64748b", // Slate-500
-          "#94a3b8", // Slate-400
-          "#cbd5e1"  // Slate-300
-        ],
-        borderWidth: 1,
-        borderColor: "#ffffff"
-      }
-    ]
-  };
-
-  // Fine Recovery Bar Chart in INR (₹)
-  const fineCollectionData = {
-    labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct"],
-    datasets: [
-      {
-        label: "Fines Collected (₹)",
-        data: [1420, 1890, 2650, 3100, 4200, 3850],
-        backgroundColor: "#0f172a",
-        borderRadius: 4
-      }
-    ]
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "top",
-        labels: { font: { family: "Inter, sans-serif", size: 11 }, usePointStyle: true, color: "#64748b", boxWidth: 6 }
-      },
-      tooltip: {
-        backgroundColor: "#0f172a",
-        titleFont: { family: "Inter, sans-serif", size: 11 },
-        bodyFont: { family: "Inter, sans-serif", size: 11 },
-        padding: 8,
-        cornerRadius: 6
-      }
-    },
-    scales: {
-      x: { grid: { display: false }, ticks: { font: { size: 11 }, color: "#94a3b8" } },
-      y: { grid: { color: "#f1f5f9" }, ticks: { font: { size: 11 }, color: "#94a3b8" }, border: { dash: [3, 3] } }
-    }
-  };
-
-  const doughnutOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "bottom",
-        labels: { font: { family: "Inter, sans-serif", size: 10 }, usePointStyle: true, boxWidth: 6, color: "#64748b" }
-      }
-    },
-    cutout: "70%"
-  };
-
-  const handleExport = (format) => {
+  const handleExportCSV = () => {
     addToast(
       "success",
-      `Export Completed (${format})`,
-      `Circulation report for ${dateFilter} has been downloaded.`
+      "Report Downloaded",
+      "Library circulation summary exported as CSV."
     );
   };
 
   return (
-    <div className="space-y-5 pb-12">
-      {/* Header and Controls */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-2 border-b border-slate-200/80 dark:border-slate-800">
+    <div className="space-y-6 pb-12">
+      {/* Header and Print / Export Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/80 dark:border-slate-800">
         <div>
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white tracking-tight">
-            Reports & Analytics
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Library Reports & Summary
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Circulation trajectory, faculty category distribution, and recovery ledger.
+            Basic library circulation report, department breakdown, and student borrowing summary.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Date Selector */}
-          <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
-            {["Last 7 Days", "Last 30 Days", "This Semester", "Custom Range"].map((range) => (
-              <button
-                key={range}
-                onClick={() => setDateFilter(range)}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
-                  dateFilter === range
-                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-semibold"
-                    : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
-                }`}
-              >
-                {range}
-              </button>
-            ))}
-          </div>
-
-          {/* Export Action */}
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => handleExport("PDF")}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition-colors"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export PDF</span>
-            </button>
-            <button
-              onClick={() => handleExport("CSV")}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs transition-colors"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-slate-500" />
-              <span>CSV</span>
-            </button>
-          </div>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={handlePrint}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 text-white font-medium text-xs transition-colors cursor-pointer"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Print Report</span>
+          </button>
+          <button
+            onClick={handleExportCSV}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 dark:border-slate-800 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs transition-colors cursor-pointer"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Export CSV</span>
+          </button>
         </div>
       </div>
 
-      {/* KPI Overview Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 4 Summary Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-          <span className="text-xs font-medium text-slate-400">Total Loans Processed</span>
-          <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mt-1 tabular-nums">14,280</h3>
-          <p className="text-[11px] text-emerald-600 mt-2 font-medium">
-            +14.2% circulation velocity
-          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500">Total Books</span>
+            <BookOpen className="w-4 h-4 text-slate-400" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-1 tabular-nums">
+            {stats.totalBooks}
+          </h3>
+          <p className="text-[11px] text-slate-400 mt-1">Across all branches</p>
         </div>
 
         <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-          <span className="text-xs font-medium text-slate-400">On-Time Return Rate</span>
-          <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mt-1 tabular-nums">96.4%</h3>
-          <p className="text-[11px] text-slate-500 mt-2">
-            Average loan length: <span className="font-medium text-slate-700 dark:text-slate-300">11.4 days</span>
-          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500">Available on Shelves</span>
+            <CheckCircle className="w-4 h-4 text-emerald-500" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-1 tabular-nums">
+            {stats.availableBooks}
+          </h3>
+          <p className="text-[11px] text-emerald-600 mt-1 font-medium">Ready for issue</p>
         </div>
 
         <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-          <span className="text-xs font-medium text-slate-400">Peak Circulation Hour</span>
-          <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mt-1 tabular-nums">2:00 – 4:00 PM</h3>
-          <p className="text-[11px] text-slate-500 mt-2">
-            Heaviest traffic on <span className="font-medium text-slate-700 dark:text-slate-300">Tue & Thu</span>
-          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500">Currently Issued</span>
+            <Clock className="w-4 h-4 text-amber-500" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-1 tabular-nums">
+            {stats.issuedBooks}
+          </h3>
+          <p className="text-[11px] text-slate-400 mt-1">Active student loans</p>
         </div>
 
         <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-          <span className="text-xs font-medium text-slate-400">Fee Recovery Ratio</span>
-          <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mt-1 tabular-nums">88.5%</h3>
-          <p className="text-[11px] text-emerald-600 mt-2 font-medium">
-            +₹3,850 recovered this term
-          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500">Fines Collected</span>
+            <IndianRupee className="w-4 h-4 text-indigo-500" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-1 tabular-nums">
+            ₹3,850
+          </h3>
+          <p className="text-[11px] text-slate-400 mt-1">This academic semester</p>
         </div>
       </div>
 
-      {/* Row 2: Borrowed vs Returned & Category Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="font-semibold text-sm text-slate-900 dark:text-white">
-                Circulation Trajectory (Fall 2026)
-              </h3>
-              <p className="text-xs text-slate-500">
-                Monthly loan checkouts compared with returned items.
-              </p>
-            </div>
-            <span className="text-[11px] font-medium text-slate-500">
-              +18.4% YoY
-            </span>
-          </div>
-
-          <div className="h-64 w-full pt-1">
-            <Line data={circulationData} options={chartOptions} />
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+      {/* Report Table 1: Category-Wise Book Inventory */}
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-sm text-slate-900 dark:text-white">
-              Category Distribution
+              Department & Category-Wise Book Inventory
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              12,480 titles across departments
-            </p>
-
-            <div className="h-56 w-full relative mt-3">
-              <Doughnut data={categoryData} options={doughnutOptions} />
-            </div>
+            <p className="text-xs text-slate-500">Book distribution across engineering departments</p>
           </div>
+          <span className="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+            6 Categories
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800">
+              <tr>
+                <th className="py-2.5 px-4 font-medium">Department / Category</th>
+                <th className="py-2.5 px-4 font-medium text-right">Total Copies</th>
+                <th className="py-2.5 px-4 font-medium text-right">Available Copies</th>
+                <th className="py-2.5 px-4 font-medium text-right">Currently Borrowed</th>
+                <th className="py-2.5 px-4 font-medium text-right">Availability Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {CATEGORY_BREAKDOWN_DATA.labels.map((category, idx) => {
+                const total = CATEGORY_BREAKDOWN_DATA.counts[idx];
+                const borrowed = Math.round(total * 0.2);
+                const available = total - borrowed;
+                return (
+                  <tr key={category} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
+                    <td className="py-2.5 px-4 font-medium text-slate-900 dark:text-white">
+                      {category}
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-mono text-slate-700 dark:text-slate-300">
+                      {total.toLocaleString()}
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-mono text-emerald-600 font-medium">
+                      {available.toLocaleString()}
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-mono text-slate-500">
+                      {borrowed.toLocaleString()}
+                    </td>
+                    <td className="py-2.5 px-4 text-right">
+                      <Badge variant="available" size="sm">
+                        In Stock
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* Row 3: Fine Recovery Bar Chart & Scholar Leaderboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-          <h3 className="font-semibold text-sm text-slate-900 dark:text-white">
-            Fine Collection Inflow
-          </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Monthly late penalty recovery in INR (₹)
-          </p>
+      {/* Row 2: Monthly Summary Table & Top Student Readers Table */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Monthly Summary Table */}
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800">
+            <h3 className="font-semibold text-sm text-slate-900 dark:text-white">
+              Monthly Circulation Summary
+            </h3>
+            <p className="text-xs text-slate-500">Books issued, returned, and fines collected</p>
+          </div>
 
-          <div className="h-60 w-full pt-3">
-            <Bar data={fineCollectionData} options={chartOptions} />
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th className="py-2.5 px-4 font-medium">Month</th>
+                  <th className="py-2.5 px-4 font-medium text-right">Borrowed</th>
+                  <th className="py-2.5 px-4 font-medium text-right">Returned</th>
+                  <th className="py-2.5 px-4 font-medium text-right">Fine Collected</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {MONTHLY_TREND_DATA.labels.map((month, idx) => (
+                  <tr key={month} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
+                    <td className="py-2.5 px-4 font-medium text-slate-900 dark:text-white">
+                      {month} 2026
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-mono text-slate-700 dark:text-slate-300">
+                      {MONTHLY_TREND_DATA.borrowed[idx].toLocaleString()}
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-mono text-slate-500">
+                      {MONTHLY_TREND_DATA.returned[idx].toLocaleString()}
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-mono font-medium text-emerald-600">
+                      ₹{monthlyFines[idx].toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs">
-          <div className="flex items-center justify-between mb-3">
+        {/* Top Active Students Table */}
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Award className="w-4 h-4 text-slate-600" />
-                <span>Active Scholars & Top Readers</span>
+              <h3 className="font-semibold text-sm text-slate-900 dark:text-white">
+                Most Active Student Borrowers
               </h3>
-              <p className="text-xs text-slate-500">
-                Cardholders with highest library reading velocity this term.
-              </p>
+              <p className="text-xs text-slate-500">Top readers in the college library</p>
             </div>
-            <span className="text-[11px] font-medium text-slate-500">
-              Semester Honor Roll
-            </span>
+            <Award className="w-4 h-4 text-amber-500" />
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {ACTIVE_STUDENTS_LEADERBOARD.map((student, idx) => (
-              <div
-                key={student.name}
-                className="py-2.5 flex items-center justify-between gap-4 text-xs"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-slate-400 text-xs w-4">
-                    #{idx + 1}
-                  </span>
-
-                  <img
-                    src={student.avatar}
-                    alt={student.name}
-                    className="w-7 h-7 rounded-full object-cover shrink-0"
-                  />
-
-                  <div>
-                    <h4 className="font-medium text-slate-900 dark:text-white">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th className="py-2.5 px-4 font-medium">Rank</th>
+                  <th className="py-2.5 px-4 font-medium">Student Name</th>
+                  <th className="py-2.5 px-4 font-medium">Department</th>
+                  <th className="py-2.5 px-4 font-medium text-right">Books Borrowed</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {ACTIVE_STUDENTS_LEADERBOARD.map((student, idx) => (
+                  <tr key={student.name} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
+                    <td className="py-2.5 px-4 font-bold text-slate-400">
+                      #{idx + 1}
+                    </td>
+                    <td className="py-2.5 px-4 font-medium text-slate-900 dark:text-white">
                       {student.name}
-                    </h4>
-                    <p className="text-[11px] text-slate-400">{student.department}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="text-right">
-                    <span className="font-semibold text-xs text-slate-900 dark:text-white tabular-nums">
-                      {student.booksRead}
-                    </span>
-                    <span className="text-[10px] text-slate-400 block uppercase">Titles</span>
-                  </div>
-                  <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                    {student.badge}
-                  </span>
-                </div>
-              </div>
-            ))}
+                    </td>
+                    <td className="py-2.5 px-4 text-slate-500">
+                      {student.department}
+                    </td>
+                    <td className="py-2.5 px-4 text-right font-mono font-semibold text-indigo-600 dark:text-indigo-400">
+                      {student.booksRead} books
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

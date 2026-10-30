@@ -81,17 +81,14 @@ export default function Navbar() {
 
       {/* Right: Search, Quick Action, Notifications, Profile */}
       <div className="flex items-center gap-2">
-        {/* Command Search Trigger */}
+        {/* Simple Search Trigger */}
         <button
           onClick={() => setIsSearchModalOpen(true)}
           className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/70 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs transition-colors cursor-pointer border border-transparent hover:border-slate-300"
-          title="Search (Ctrl+K)"
+          title="Search books or students"
         >
           <Search className="w-3.5 h-3.5 text-slate-400" />
-          <span className="hidden sm:inline">Search...</span>
-          <kbd className="hidden sm:inline-block px-1.5 py-0.2 text-[10px] font-mono bg-white dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 text-slate-400">
-            ⌘K
-          </kbd>
+          <span className="hidden sm:inline">Search library...</span>
         </button>
 
         {/* Quick Issue Action */}
